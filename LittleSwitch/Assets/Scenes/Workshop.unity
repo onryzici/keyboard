@@ -20,9 +20,9 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.4, g: 0.48, b: 0.49, a: 1}
-  m_AmbientEquatorColor: {r: 0.32, g: 0.39, b: 0.38, a: 1}
-  m_AmbientGroundColor: {r: 0.15, g: 0.17, b: 0.16, a: 1}
+  m_AmbientSkyColor: {r: 0.47, g: 0.48, b: 0.435, a: 1}
+  m_AmbientEquatorColor: {r: 0.38, g: 0.395, b: 0.345, a: 1}
+  m_AmbientGroundColor: {r: 0.18, g: 0.177, b: 0.145, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -21911,8 +21911,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.53, g: 0.72, b: 0.77, a: 1}
-  m_Intensity: 0.9
+  m_Color: {r: 0.9, g: 0.86, b: 0.73, a: 1}
+  m_Intensity: 1.05
   m_Range: 13
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -31414,7 +31414,7 @@ GameObject:
   - component: {fileID: 467675407}
   - component: {fileID: 467675409}
   m_Layer: 0
-  m_Name: Cool wall reflected daylight
+  m_Name: Soft golden reflected daylight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31430,8 +31430,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 0.7, g: 0.81, b: 0.82, a: 1}
-  m_Intensity: 4
+  m_Color: {r: 0.96, g: 0.91, b: 0.77, a: 1}
+  m_Intensity: 4.3
   m_Range: 14
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082
@@ -40509,8 +40509,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 0
-  m_Color: {r: 1, g: 0.89, b: 0.7, a: 1}
-  m_Intensity: 12
+  m_Color: {r: 1, g: 0.92, b: 0.76, a: 1}
+  m_Intensity: 14.5
   m_Range: 20
   m_SpotAngle: 105
   m_InnerSpotAngle: 60
@@ -60865,7 +60865,8 @@ MonoBehaviour:
   sound: {fileID: 0}
   closeView: 0
   inspection: 0
-  hint: 
+  hint: "Alt + s\xFCr\xFCkle: masa d\xFCzeni \xB7 Sa\u011F tu\u015F: kamera \xB7
+    Tekerlek: zoom"
 --- !u!4 &922809046
 Transform:
   m_ObjectHideFlags: 0
@@ -116315,8 +116316,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 2
-  m_Color: {r: 1, g: 0.85, b: 0.65, a: 1}
-  m_Intensity: 1.8
+  m_Color: {r: 1, g: 0.91, b: 0.74, a: 1}
+  m_Intensity: 2.05
   m_Range: 6
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.802082

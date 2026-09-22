@@ -47,3 +47,8 @@ Scene is authoritative; do NOT rerun old room migration scripts. Window moved to
 - Removed particle-ball steam. Three tapered translucent curling ribbons follow the cup and hide during sipping.
 - Passed: compilation, five-order validator, both package pickup/open animations, all 61 key ray targets, sip return, music playback/loop, layout serialization, actual Alt-drag/release input, carton-content following, blocked overlapping/off-table placements, camera rotation/zoom limits.
 - Unity cloud token-exchange errors may appear independently of offline gameplay. No standalone player build was produced during this check.
+
+## Final lighting adjustment
+- Window ray opacity 0.027 → 0.044; pale golden color (1,0.91,0.70).
+- Window bounce 12 → 14.5 with a pale yellow tint. Room reflected fill shifted from blue/cyan to restrained warm cream; ambient trilight slightly warmed.
+- Kept the orange flickering shelf lantern. Reviewed in Play mode; screenshot updated at `references/reviews/workshop-latest.png`.
