@@ -52,3 +52,10 @@ Scene is authoritative; do NOT rerun old room migration scripts. Window moved to
 - Window ray opacity 0.027 → 0.044; pale golden color (1,0.91,0.70).
 - Window bounce 12 → 14.5 with a pale yellow tint. Room reflected fill shifted from blue/cyan to restrained warm cream; ambient trilight slightly warmed.
 - Kept the orange flickering shelf lantern. Reviewed in Play mode; screenshot updated at `references/reviews/workshop-latest.png`.
+
+## Workshop identity pass — 2026-09-22
+- User rejected the brick wall experiment. Original `SubtleRearPlaster` restored; all brick instances and generated brick assets removed. Keep this plaster surface in future passes unless explicitly asked otherwise.
+- Existing Sjolle tools grouped on a perforated steel wall board. Added two keyboard display builds, two smooth coiled cables, a spare PCB and a physical three-sheet job board. These are environmental props, not extra gameplay/UI controls.
+- Empty clock shelf and old isolated two-tool rail disabled. Upper shelf archive regrouped into keyboard showcases and cartons, with plant clearance. Right shelves visually connected by metal mounting uprights and small stock labels.
+- Orange reflected fill increased slightly; recessed warm strip under upper shelf gives a focused work-area light. Existing window rays/dust and flickering lantern retained.
+- Reopened saved scene: no missing mesh/material references. Verified both package pickup/open animations, all 61 key ray targets, drink return and looping music; player progress restored after checks. Screenshot: references/reviews/workshop-latest.png.

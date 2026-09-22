@@ -55,3 +55,6 @@ Building A, B, D, F use the supplied colormap. License retained in KenneyCity/Li
 - Music/ChillLofi.mp3: “Chill lofi inspired” by omfgdude, CC0, https://opengameart.org/node/74097 . Original MP3 download https://opengameart.org/sites/default/files/ChillLofiR_0.mp3 . Low-volume loop with 3-second fade-in; 123.19 seconds.
 - PorcelainSocket.fbx: original modeled rounded porcelain plate with recessed well, pin wells and screw heads.
 - Original RoundedTaskLamp and VintageOvalLamp experiments were rejected; all desk lamp scene roots and their light/cable removed at user request. Imported VintageBankerLamp from https://3dassets.dev/assets/police-station-and-detective-office-bankers-lamp-fb4ee0bf (CC0, AI-assisted) was evaluated but NOT used.
+
+## Workshop wall dressing — 2026-09-22
+Existing CC0 Sjolle tool instances reused on the wall. Perforated tool panel, physical job sheets, keyboard showcases using the project's original 61-key layout, smooth coiled cables, decorative spare PCB, shelf mounting hardware and recessed diffuser are original project geometry. No pixels, logos or models copied from the supplied reference images. The rejected brick experiment was removed; original plaster material remains active.
