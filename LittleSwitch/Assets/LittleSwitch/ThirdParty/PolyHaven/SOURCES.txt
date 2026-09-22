@@ -1,0 +1,10 @@
+CC0 — Poly Haven
+https://polyhaven.com/license
+beige_wall_001 by Dimitrios Savva and Rico Cilliers
+https://polyhaven.com/a/beige_wall_001
+wood_table by Dimitrios Savva
+https://polyhaven.com/a/wood_table
+Original 1K diffuse, OpenGL normals, AO, roughness. Mask.png packs metallic=0, AO=G, smoothness=1-roughness in alpha for Unity URP.
+
+fine_grained_wood by Rob Tuytel, CC0
+https://polyhaven.com/a/fine_grained_wood

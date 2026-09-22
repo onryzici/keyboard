@@ -1,0 +1,19 @@
+string phase="start";try{
+var game=UnityEngine.Object.FindAnyObjectByType<LittleSwitch.ShopGame>();var cam=game.viewCamera;var originalPosition=cam.transform.position;var originalRotation=cam.transform.rotation;bool boardActive=game.board.gameObject.activeSelf;int hits=0;
+try {
+ game.board.gameObject.SetActive(true);cam.transform.position=new UnityEngine.Vector3(-.35f,8.1f,-2.1f);cam.transform.LookAt(new UnityEngine.Vector3(-.35f,4.15f,-.55f));UnityEngine.Physics.SyncTransforms();
+ for(int i=0;i<61;i++){phase="key "+i;var slots=game.board.GetComponentsInChildren<LittleSwitch.KeySlot>().Where(s=>s.index==i).ToArray();var target=slots[slots.Length-1].GetComponent<UnityEngine.Collider>().bounds.center;var ray=cam.ScreenPointToRay(cam.WorldToScreenPoint(target));if(UnityEngine.Physics.Raycast(ray,out var hit,100)&&hit.collider.GetComponentInParent<LittleSwitch.KeySlot>()?.index==i)hits++;}
+}finally{cam.transform.position=originalPosition;cam.transform.rotation=originalRotation;game.board.gameObject.SetActive(boardActive);}
+if(hits!=61)throw new System.Exception("Key picking failed: "+hits+"/61");
+phase="pack";var state=game.state;var close=game.closeView;var save=System.IO.File.ReadAllBytes(LittleSwitch.ShopSave.PathName);var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;int steps=0;
+try {
+ game.state=UnityEngine.JsonUtility.FromJson<LittleSwitch.BuildState>(UnityEngine.JsonUtility.ToJson(state));game.state.stage=LittleSwitch.BuildStage.Package;game.state.packingStep=0;
+ for(int i=0;i<3;i++){var e=(System.Collections.IEnumerator)typeof(LittleSwitch.ShopGame).GetMethod("Pack",flags).Invoke(game,null);int n=0;while(e.MoveNext()){if(++n>3000)throw new System.Exception("Animation iteration limit");}steps++;}
+ if(game.state.stage!=LittleSwitch.BuildStage.Ready||game.state.packingStep!=3)throw new System.Exception("Packaging did not reach Ready");
+}finally {
+ game.state=state;game.closeView=close;typeof(LittleSwitch.ShopGame).GetField("busy",flags).SetValue(game,false);System.IO.File.WriteAllBytes(LittleSwitch.ShopSave.PathName,save);typeof(LittleSwitch.ShopGame).GetMethod("RefreshSupply",flags).Invoke(game,null);typeof(LittleSwitch.ShopGame).GetMethod("RefreshParcel",flags).Invoke(game,null);game.ui.Refresh();
+}
+phase="material";var surface=UnityEngine.GameObject.Find("Continuous plaster wall").GetComponent<UnityEngine.Renderer>().sharedMaterial;var mesh=UnityEngine.GameObject.Find("Continuous plaster wall").GetComponent<UnityEngine.MeshFilter>().sharedMesh;
+return new {keyPicking=hits,packingSteps=steps,savePreserved=System.IO.File.ReadAllBytes(LittleSwitch.ShopSave.PathName).SequenceEqual(save),normalMap=surface.GetTexture("_BumpMap")!=null,normalEnabled=surface.IsKeywordEnabled("_NORMALMAP"),tangents=mesh.tangents.Length,vertices=mesh.vertexCount};
+
+}catch(System.Exception e){return phase+" / "+e.ToString();}

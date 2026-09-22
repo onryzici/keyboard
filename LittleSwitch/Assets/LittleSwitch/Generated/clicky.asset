@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d80df5757c9947c1940e081368b3a79, type: 3}
+  m_Name: clicky
+  m_EditorClassIdentifier: Assembly-CSharp::LittleSwitch.PartDefinition
+  id: clicky
+  displayName: "\xC7\u0131t\u0131r \xB7 Clicky \xB7 20"
+  description: "Belirgin, parlak bir t\u0131k sesi."
+  kind: 2
+  price: 20
+  layout: 60
+  primary: {r: 0.47058824, g: 0.6039216, b: 0.65882355, a: 1}
+  accent: {r: 0.47058824, g: 0.6039216, b: 0.65882355, a: 1}
+  pitch: 1
+  volume: 0.65
+  feel: 

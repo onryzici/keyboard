@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ShopCatalog
+  m_EditorClassIdentifier: Assembly-CSharp:LittleSwitch:ShopCatalog
+  casePart: {fileID: 11400000, guid: 4058e0263392d4ac8b24fb69040be0e6, type: 2}
+  pcb: {fileID: 11400000, guid: cfa9c971f20ac447094c2c3bafee19e7, type: 2}
+  switches:
+  - {fileID: 11400000, guid: be8947ed003614d4797124c34b37cb40, type: 2}
+  - {fileID: 11400000, guid: 1bb2da093982a4ce88ad4c17a40b2fe2, type: 2}
+  - {fileID: 11400000, guid: 3e8c491740e2f4ebc947165f7d21491e, type: 2}
+  keycaps:
+  - {fileID: 11400000, guid: d407c3a9fb5a4418eb4ba1fc05cea812, type: 2}
+  - {fileID: 11400000, guid: 7ada765a95a4e4d6c9e269709e71730f, type: 2}
+  - {fileID: 11400000, guid: 1911bccfa32cf4367ae123bd6333d87e, type: 2}
+  orders:
+  - name: Deniz
+    request: "Gece yaz\u0131yorum. Hafif, ak\u0131c\u0131 ve yumu\u015Fak sesli olsun.
+      Krem ve ye\u015Fil bana iyi geliyor."
+    budget: 150
+    switchId: linear
+    keycapId: moss
+  - name: Ada
+    request: "Hik\xE2yelerimi yazarken tu\u015Fun alt\u0131nda k\xFC\xE7\xFCk bir
+      e\u015Fik hissetmek istiyorum. Toprak tonlar\u0131n\u0131 severim."
+    budget: 165
+    switchId: tactile
+    keycapId: clay
+  - name: Ege
+    request: "Eski daktilolar\u0131n belirgin \xE7\u0131t\u0131rt\u0131s\u0131n\u0131
+      \xF6zledim. Masam mavi ve a\xE7\u0131k gri."
+    budget: 158
+    switchId: clicky
+    keycapId: mist
+  - name: Mina
+    request: "\xC7izim molalar\u0131nda ak\u0131c\u0131 tu\u015Flarla yazmak ho\u015Fuma
+      gidiyor. S\u0131cak kiremit rengi olsun."
+    budget: 160
+    switchId: linear
+    keycapId: clay
+  - name: Can
+    request: "Uzun yaz\u0131larda tu\u015Fu hissetmek istiyorum, ama \xE7\u0131t\u0131r
+      t\u0131k sesi olmadan. Sakin ye\u015Fil tonlar\u0131 harika olur."
+    budget: 170
+    switchId: tactile
+    keycapId: moss

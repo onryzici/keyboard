@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d80df5757c9947c1940e081368b3a79, type: 3}
+  m_Name: pcb-60
+  m_EditorClassIdentifier: Assembly-CSharp::LittleSwitch.PartDefinition
+  id: pcb-60
+  displayName: Hot-swap 60
+  description: 
+  kind: 1
+  price: 22
+  layout: 60
+  primary: {r: 0.2784314, g: 0.4, b: 0.36862746, a: 1}
+  accent: {r: 0.2784314, g: 0.4, b: 0.36862746, a: 1}
+  pitch: 1
+  volume: 0.2
+  feel: 
