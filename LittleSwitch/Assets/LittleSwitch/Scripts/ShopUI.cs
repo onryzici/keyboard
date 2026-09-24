@@ -4,6 +4,7 @@ namespace LittleSwitch {
 public class ShopUI : MonoBehaviour {
  ShopGame game;Transform root,card,choices,context,menu,shade;TextMeshProUGUI wallet,order,stage,hint,mailHeader;UnityEngine.UI.Button action;TextMeshProUGUI actionText;UnityEngine.UI.Button[] sw=new UnityEngine.UI.Button[3],caps=new UnityEngine.UI.Button[3];Sprite rounded;
  public bool TerminalOpen {get;private set;}
+ public void SetVisible(bool visible){if(root)root.gameObject.SetActive(visible);}
  public void Build(ShopGame g){
  game=g;rounded=Resources.Load<Sprite>("UI/rounded-panel");var canvas=new GameObject("Quiet interface",typeof(Canvas),typeof(UnityEngine.UI.CanvasScaler),typeof(UnityEngine.UI.GraphicRaycaster));root=canvas.transform;canvas.GetComponent<Canvas>().renderMode=RenderMode.ScreenSpaceOverlay;
  var scaler=canvas.GetComponent<UnityEngine.UI.CanvasScaler>();scaler.uiScaleMode=UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1600,1000);scaler.matchWidthOrHeight=.5f;

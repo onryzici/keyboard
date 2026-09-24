@@ -1,10 +1,12 @@
 Shader "LittleSwitch/SoftSteam" {
- SubShader {Tags {"Queue"="Transparent" "RenderType"="Transparent" "RenderPipeline"="UniversalPipeline"} Pass {
+ SubShader {Tags {"Queue"="Transparent" "RenderType"="Transparent" "RenderPipeline"="HDRenderPipeline"} Pass { Tags {"LightMode"="ForwardOnly"}
  Blend SrcAlpha OneMinusSrcAlpha ZWrite Off Cull Off
  HLSLPROGRAM
  #pragma vertex vert
  #pragma fragment frag
- #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+ #pragma target 4.5
+ #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+ #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
  struct A {float4 positionOS:POSITION;float2 uv:TEXCOORD0;half4 color:COLOR;};
  struct V {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;half4 color:COLOR;};
  V vert(A a){V o;o.positionCS=TransformObjectToHClip(a.positionOS.xyz);o.uv=a.uv;o.color=a.color;return o;}

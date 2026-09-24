@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: b8e84cf115174755b29d12863c5c04a9, type: 3}
   m_Name: ShopCatalog
   m_EditorClassIdentifier: Assembly-CSharp:LittleSwitch:ShopCatalog
   casePart: {fileID: 11400000, guid: 4058e0263392d4ac8b24fb69040be0e6, type: 2}

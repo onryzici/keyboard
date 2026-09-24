@@ -3,7 +3,7 @@ namespace LittleSwitch {
 public static class SoftShapes {
  static Dictionary<string,Material> mats=new Dictionary<string,Material>();
  public static Color C(string hex){ColorUtility.TryParseHtmlString("#"+hex,out var c);return c;}
- public static Material Mat(string hex){if(mats.TryGetValue(hex,out var m)&&m)return m;m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name="Mat_"+hex,color=C(hex)};m.SetFloat("_Smoothness",.18f);mats[hex]=m;return m;}
+ public static Material Mat(string hex){if(mats.TryGetValue(hex,out var m)&&m)return m;m=new Material(Shader.Find("HDRP/Lit")){name="Mat_"+hex,color=C(hex)};m.SetFloat("_Smoothness",.18f);UnityEngine.Rendering.HighDefinition.HDMaterial.ValidateMaterial(m);mats[hex]=m;return m;}
  public static Mesh Rounded(Vector3 size,float r){
   var v=new List<Vector3>();var n=new List<Vector3>();var uv=new List<Vector2>();var tris=new List<int>();int steps=6;r=Mathf.Min(r,Mathf.Min(size.x,Mathf.Min(size.y,size.z))*.49f);Vector3 inner=size*.5f-Vector3.one*r;
   Vector3[] normals={Vector3.right,Vector3.left,Vector3.up,Vector3.down,Vector3.forward,Vector3.back};

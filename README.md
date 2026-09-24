@@ -1,10 +1,14 @@
-# Little Switch
+﻿# Little Switch
 
 Sıcak, stilize bir klavye atölyesinde geçen oynanabilir Unity prototipi.
 
 ## Açılış
 
-Git LFS kurulu olmalı (`git lfs install`). Klonladıktan sonra `git lfs pull` çalıştırın. Unity Hub'da **LittleSwitch/** klasörünü Unity **6000.5.6f1** ile açın. URP paketleri yüklendikten sonra `Assets/Scenes/Workshop.unity` sahnesinde Play'e basın.
+Git LFS kurulu olmalı (`git lfs install`). Klonladıktan sonra `git lfs pull` çalıştırın. Unity Hub'da **LittleSwitch/** klasörünü Unity **6000.5.6f1** ile açın. HDRP paketleri yüklendikten sonra `Assets/Scenes/WorkshopFocused.unity` sahnesinde Play'e basın.
+
+**WASD** yürü, **fare** bak. Tezgâha yaklaşınca **E** ile çalış; **Esc** ile ayağa kalk. Açık terminal veya eldeki parça varsa Esc önce onu kapatır/bırakır. Yürürken Esc imleci bırakır, sol tık yürüyüşe döner. Windows sürümü 4K tam ekran açılır. Güncel değişiklikler: [WORKSHOP_FOCUS.md](WORKSHOP_FOCUS.md).
+
+Önceki `Workshop.unity` ve yalnızca ortam denemesi `WalkableWorkshop.unity` korunur. Sipariş ve fiziksel montaj güncel sahnede de çalışır; aşağıdaki etkileşimler tezgâh modunda kullanılabilir.
 
 ## Kontroller
 
@@ -29,3 +33,6 @@ Kod: `LittleSwitch/Assets/LittleSwitch/Scripts/`. Kurallar/veri kontrolü: Unity
 Sahne güncel düzenin kaynağıdır. Eski `Create Workshop` / toplu kompozisyon üretim araçları güncel sahnenin üzerine çalıştırılmamalıdır. Sanat yönü: `AGENTS.md`; sahne notları: `references/SCENE_NOTES.md`.
 
 Üçüncü taraf model, doku, ses ve müzik lisansları: [SOURCES.md](LittleSwitch/Assets/LittleSwitch/ThirdParty/SOURCES.md). Bu repo üçüncü taraf varlıkların lisanslarını değiştirmez.
+
+
+

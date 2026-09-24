@@ -1,11 +1,13 @@
 Shader "LittleSwitch/DriftingDust" {
 Properties { _Color("Tint",Color)=(1,.86,.6,1) }
-SubShader {Tags {"RenderPipeline"="UniversalPipeline" "Queue"="Transparent" "RenderType"="Transparent"}
-Pass {Blend SrcAlpha One ZWrite Off Cull Off
+SubShader {Tags {"RenderPipeline"="HDRenderPipeline" "Queue"="Transparent" "RenderType"="Transparent"}
+Pass {Tags {"LightMode"="ForwardOnly"} Blend SrcAlpha One ZWrite Off Cull Off
 HLSLPROGRAM
 #pragma vertex vert
 #pragma fragment frag
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#pragma target 4.5
+#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 struct A {float4 positionOS:POSITION;float2 uv:TEXCOORD0;half4 color:COLOR;};struct V {float4 positionCS:SV_POSITION;float2 uv:TEXCOORD0;half4 color:COLOR;};
 CBUFFER_START(UnityPerMaterial)
 half4 _Color;

@@ -1,25 +1,28 @@
-using System.Collections; using UnityEngine; using UnityEngine.InputSystem; using UnityEngine.EventSystems;
+﻿using System.Collections; using UnityEngine; using UnityEngine.InputSystem; using UnityEngine.EventSystems;
 using static LittleSwitch.SoftShapes;
 namespace LittleSwitch {
 public partial class ShopGame : MonoBehaviour {
  const float PartScale=.38f;
+ public bool touring;
+ public bool CanLeaveWorkbench=>state!=null&&!busy&&!held&&!selectedTool&&!movingProp&&!ui.TerminalOpen;
  public ShopCatalog catalog;public Camera viewCamera;public BuildState state;public KeyboardView board;public ShopUI ui;public WorkshopSound sound;
  public bool closeView,inspection; public string hint="";GameObject supply,held,parcel,upgrade;Renderer highlight;int hover=-1;bool busy;float orbit;Vector3 shopPos=new Vector3(1.8f,8.0f,-10.6f),shopTarget=new Vector3(0,5.2f,1.0f);
  void Start(){state=ShopSave.Load();sound=gameObject.AddComponent<WorkshopSound>();var b=new GameObject("Your handmade keyboard");b.transform.position=new Vector3(0,4.135f,-.55f);b.transform.localScale=Vector3.one*PartScale;board=b.AddComponent<KeyboardView>();board.Initialize();board.Refresh(state,catalog);ui=gameObject.AddComponent<ShopUI>();ui.Build(this);closeView=state.stage>=BuildStage.Switches&&state.stage<=BuildStage.Test;DeskLayout.Apply();RestorePackages();if(NeedsPackage)closeView=false;RefreshSupply();RefreshUpgrade();RefreshParcel();ui.Refresh();}
- void Update(){if(state==null)return;var mouse=Mouse.current;var keyboard=Keyboard.current;
+ void Update(){if(state==null||touring)return;var mouse=Mouse.current;var keyboard=Keyboard.current;
  if(ui.TerminalOpen){if(selectedTool)ReleaseTool();if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame)ui.CloseTerminal();return;}
  if(mouse!=null&&DeskInput(mouse,keyboard))return;
  if(!busy&&keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame){if(selectedTool){ReleaseTool();}else if(held){Destroy(held);held=null;}else{closeView=!closeView;inspection=false;}}
  if(!busy&&keyboard!=null&&keyboard.tabKey.wasPressedThisFrame){if(!busy)ReleaseTool();closeView=!closeView;inspection=false;}
  CameraInput(mouse,EventSystem.current&&EventSystem.current.IsPointerOverGameObject());
- Vector3 target=closeView?new Vector3(-1.15f,4.15f,-.55f):shopTarget;Vector3 pos=closeView?new Vector3(-1.15f,9.6f,-2.8f):shopPos;
+ Vector3 target=closeView?new Vector3(0,4.15f,-.55f):shopTarget;Vector3 pos=closeView?new Vector3(0,7.6f,-2.1f):shopPos;
  if(inspection){pos=new Vector3(Mathf.Sin(orbit)*2.5f,6.1f,-.55f-Mathf.Cos(orbit)*2.5f);target=new Vector3(0,4.25f,-.55f);}
  if(closeView&&!inspection)pos=target+Quaternion.Euler(benchPitch,benchYaw,0)*(pos-target);
  zoom=Mathf.Lerp(zoom,zoomTarget,1-Mathf.Exp(-Time.deltaTime*6));pos=target+(pos-target)*zoom;
  if(!closeView&&!inspection)target=pos+Quaternion.Euler(roomPitch,roomYaw,0)*(target-pos);
  viewCamera.transform.position=Vector3.Lerp(viewCamera.transform.position,pos,1-Mathf.Exp(-Time.deltaTime*4));viewCamera.transform.rotation=Quaternion.Slerp(viewCamera.transform.rotation,Quaternion.LookRotation(target-viewCamera.transform.position),1-Mathf.Exp(-Time.deltaTime*4));
+ viewCamera.fieldOfView=Mathf.Lerp(viewCamera.fieldOfView,closeView?40:55,1-Mathf.Exp(-Time.deltaTime*4));
  if(mouse==null||busy)return;Ray ray=viewCamera.ScreenPointToRay(mouse.position.ReadValue());bool overUI=EventSystem.current&&EventSystem.current.IsPointerOverGameObject();
- if(held){var plane=new Plane(Vector3.up,new Vector3(0,4.224f,0));if(plane.Raycast(ray,out float d))held.transform.position=ray.GetPoint(d)+Vector3.up*.18f;int best=-1;float dist=.14f;for(int i=0;i<61;i++){var p=board.SlotPosition(i);var h=held.transform.position;float dd=Vector2.Distance(new Vector2(p.x,p.z),new Vector2(h.x,h.z));if(dd<dist&&ValidSlot(i)){best=i;dist=dd;}}Highlight(best);if(best>=0)held.transform.position=Vector3.Lerp(held.transform.position,board.SlotPosition(best)+Vector3.up*.22f,.6f);if(mouse.leftButton.wasReleasedThisFrame){if(best>=0)StartCoroutine(Install(best));else{Destroy(held);held=null;hint="Parça tepsiye döndü. Acelemiz yok.";ui.Refresh();}Highlight(-1);}return;}
+ if(held){UpdateHeldPart(ray,overUI,mouse.leftButton.wasReleasedThisFrame);return;}
  if(selectedTool)MoveTool(ray);
  if(overUI)return;
  if(Physics.Raycast(ray,out var hit,100)){
@@ -34,15 +37,15 @@ public partial class ShopGame : MonoBehaviour {
  var slot=hit.collider.GetComponentInParent<KeySlot>();var tray=hit.collider.GetComponentInParent<PartsSupply>();
  if(mouse.leftButton.wasPressedThisFrame&&tray&&(state.stage==BuildStage.Switches||state.stage==BuildStage.Keycaps))PickUp();
  else if(mouse.leftButton.wasPressedThisFrame&&slot&&state.stage==BuildStage.Test)TestKey(slot.index);
- else if(closeView&&mouse.rightButton.wasReleasedThisFrame&&rightTravel<5&&slot&&(state.stage==BuildStage.Test||state.stage==BuildStage.Keycaps||state.stage==BuildStage.Switches))Repair(slot.index);
+ else if(closeView&&mouse.rightButton.wasReleasedThisFrame&&rightTravel<5&&slot&&(state.stage==BuildStage.Test||state.stage==BuildStage.Keycaps||state.stage==BuildStage.Switches))QuickToolAction(slot.index);
  }
  if(state.stage==BuildStage.Test&&keyboard!=null){// Map physical keyboard keys to their visible counterparts.
- foreach(var control in keyboard.allKeys)if(control.wasPressedThisFrame){string label=control.displayName.ToLowerInvariant();for(int i=0;i<board.keys.Length;i++)if(board.keys[i].label.ToLowerInvariant()==label){TestKey(i);break;}}}
+ foreach(var control in keyboard.allKeys)if(control.wasPressedThisFrame)PhysicalTestKey(control.keyCode,control.displayName);}
  }
  bool ValidSlot(int i)=>state.stage==BuildStage.Switches?state.switches[i]<0:state.stage==BuildStage.Keycaps&&state.switches[i]>=0&&state.caps[i]<0;
  void Highlight(int i){if(hover>=0)board.sockets[hover].sharedMaterial=Mat("8B9A83");hover=i;if(i>=0)board.sockets[i].sharedMaterial=Mat("E7C680");}
- void PickUp(){ReleaseTool();held=new GameObject("Part in your hand");held.transform.localScale=Vector3.one*PartScale;if(state.stage==BuildStage.Switches)KeyboardView.Switch(held.transform,catalog.switches[state.switchChoice].primary);else Box("Held cap",held.transform,Vector3.zero,new Vector3(.32f,.22f,.32f),ColorUtility.ToHtmlStringRGB(catalog.keycaps[state.capChoice].primary),.05f);sound.Click(state.switchChoice,.17f);hint="Yuvanın üzerine taşı, hizala ve bırak.";ui.Refresh();}
- IEnumerator Install(int i){busy=true;var item=held;held=null;Vector3 start=item.transform.position,end=board.SlotPosition(i);for(float t=0;t<1;t+=Time.deltaTime*5){item.transform.position=Vector3.Lerp(start,end,t*t);yield return null;}sound.Click(state.switchChoice,.5f);Destroy(item);if(state.stage==BuildStage.Switches){state.switches[i]=state.switchChoice;if(state.InstalledSwitches==61){state.stage=BuildStage.Keycaps;if(!state.capPackageOpened)closeView=false;hint="Switch'ler tamam. Şimdi renkleri yerleştirelim.";}}else{state.caps[i]=state.capChoice;if(state.InstalledCaps==61){state.stage=BuildStage.Test;state.fault=17;hint="Her tuşa dokun. Bir pin iyi oturmamış olabilir.";}}
+ void PickUp(){ReleaseTool();held=new GameObject("Part in your hand");held.transform.localScale=Vector3.one*PartScale;held.transform.position=new Vector3(state.stage==BuildStage.Keycaps?1.60f:-1.60f,4.4f,-.55f);previewSlot=-2;if(state.stage==BuildStage.Switches)KeyboardView.Switch(held.transform,catalog.switches[state.switchChoice].primary);else Box("Held cap",held.transform,Vector3.zero,new Vector3(.32f,.22f,.32f),ColorUtility.ToHtmlStringRGB(catalog.keycaps[state.capChoice].primary),.05f);sound.Click(state.switchChoice,.17f);hint="Yuvanın üzerine taşı, hizala ve bırak.";ui.Refresh();}
+ IEnumerator Install(int i){busy=true;var item=held;held=null;Vector3 start=item.transform.position,end=board.SlotPosition(i);Vector3 aligned=end+Vector3.up*.12f;for(float t=0;t<1;t+=Time.deltaTime*6){item.transform.position=Vector3.Lerp(start,aligned,Mathf.SmoothStep(0,1,t));yield return null;}for(float t=0;t<1;t+=Time.deltaTime*9){item.transform.position=Vector3.Lerp(aligned,end,t*t*t);yield return null;}sound.Click(state.switchChoice,.5f);Destroy(item);if(state.stage==BuildStage.Switches){state.switches[i]=state.switchChoice;if(state.InstalledSwitches==61){state.stage=BuildStage.Keycaps;if(!state.capPackageOpened)closeView=false;hint="Switch'ler tamam. Şimdi renkleri yerleştirelim.";}}else{state.caps[i]=state.capChoice;if(state.InstalledCaps==61){state.stage=BuildStage.Test;state.fault=17;hint="Her tuşa dokun. Bir pin iyi oturmamış olabilir.";}}
  board.RenderSlot(i,state,catalog);if(board.pieces[i])yield return Settle(board.pieces[i].transform);busy=false;Changed();}
  IEnumerator Settle(Transform tr){Vector3 rest=tr.localPosition;for(float t=0;t<1;t+=Time.deltaTime*7){if(!tr)yield break;tr.localPosition=rest+Vector3.up*(Mathf.Sin(t*Mathf.PI*2)*.025f*(1-t));yield return null;}if(tr)tr.localPosition=rest;}
  public void TestKey(int i){if(state.stage!=BuildStage.Test||busy)return;sound.Click(state.switchChoice,catalog.switches[state.switchChoice].volume);if(i==state.fault){hint=""+board.keys[i].label+" yanıt vermedi. Sağ tıkla: çıkar, pini düzelt ve yeniden oturt.";board.sockets[i].sharedMaterial=Mat("CA795B");}else{state.tested[i]=true;board.RenderSlot(i,state,catalog);if(board.pieces[i])StartCoroutine(Settle(board.pieces[i].transform));if(state.Tested==61){state.stage=BuildStage.Package;hint="61 / 61. Ellerine sağlık. Paketlemeye hazır.";}}Changed();}
@@ -82,3 +85,8 @@ public partial class ShopGame : MonoBehaviour {
  void OnApplicationQuit(){if(state!=null)ShopSave.Write(state);}
  }
 }
+
+
+
+
+

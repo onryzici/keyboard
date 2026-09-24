@@ -10,8 +10,4 @@ public class PartDefinition : ScriptableObject {
 [System.Serializable] public class CustomerOrder {
  public string name, request; public int budget; public string switchId, keycapId;
 }
-[CreateAssetMenu(menuName="Little Switch/Catalog")]
-public class ShopCatalog : ScriptableObject {
- public PartDefinition casePart, pcb; public PartDefinition[] switches, keycaps; public CustomerOrder[] orders;
-}
 }

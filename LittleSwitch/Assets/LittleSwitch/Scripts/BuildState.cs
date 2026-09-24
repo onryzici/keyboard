@@ -15,7 +15,14 @@ public enum BuildStage { Order, Parts, Switches, Keycaps, Test, Package, Ready, 
  public bool Upgrade(){if(upgraded||money<90)return false;money-=90;upgraded=true;return true;}
 }
 public static class ShopSave {
- public static string PathName=>Path.Combine(Application.persistentDataPath,"little-switch-v1.json");
+#if UNITY_EDITOR
+ public static string EditorSavePathOverride;
+#endif
+ public static string PathName {get {
+#if UNITY_EDITOR
+ if(!string.IsNullOrEmpty(EditorSavePathOverride))return EditorSavePathOverride;
+#endif
+ return Path.Combine(Application.persistentDataPath,"little-switch-v1.json");}}
  public static void Write(BuildState s){string p=PathName;File.WriteAllText(p+".tmp",JsonUtility.ToJson(s,true));File.Copy(p+".tmp",p,true);File.Delete(p+".tmp");}
  public static BuildState Load(){try{if(File.Exists(PathName)){var s=JsonUtility.FromJson<BuildState>(File.ReadAllText(PathName));if(s.version==1&&s.switches.Length==61&&s.caps.Length==61&&s.tested.Length==61&&s.orderIndex>=0&&s.orderIndex<5&&s.switchChoice>=0&&s.switchChoice<3&&s.capChoice>=0&&s.capChoice<3)return s;}}catch(Exception e){Debug.LogWarning("Save could not be loaded: "+e.Message);}return new BuildState();}
 }

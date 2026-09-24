@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Workshop.unity
-    guid: 15b4ae95affe94e96a68601e0a6c4c66
+    path: Assets/Scenes/WorkshopFocused.unity
+    guid: 6f0d8bdfdf260ae4ca33df9127578dfb
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
