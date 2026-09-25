@@ -11,7 +11,7 @@ public partial class ShopGame : MonoBehaviour {
  void Update(){if(state==null||touring)return;var mouse=Mouse.current;var keyboard=Keyboard.current;
  if(ui.TerminalOpen){if(selectedTool)ReleaseTool();if(keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame)ui.CloseTerminal();return;}
  if(mouse!=null&&DeskInput(mouse,keyboard))return;
- if(!busy&&keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame){if(selectedTool){ReleaseTool();}else if(held){Destroy(held);held=null;}else{closeView=!closeView;inspection=false;}}
+ if(!busy&&keyboard!=null&&keyboard.escapeKey.wasPressedThisFrame){if(selectedTool){ReleaseTool();}else if(held){StartCoroutine(ReturnHeldPart());}else{closeView=!closeView;inspection=false;}}
  if(!busy&&keyboard!=null&&keyboard.tabKey.wasPressedThisFrame){if(!busy)ReleaseTool();closeView=!closeView;inspection=false;}
  CameraInput(mouse,EventSystem.current&&EventSystem.current.IsPointerOverGameObject());
  Vector3 target=closeView?new Vector3(0,4.15f,-.55f):shopTarget;Vector3 pos=closeView?new Vector3(0,7.6f,-2.1f):shopPos;
@@ -35,7 +35,7 @@ public partial class ShopGame : MonoBehaviour {
  if(drawer){if(mouse.leftButton.wasPressedThisFrame)drawer.Toggle();return;}
  if(hit.collider.GetComponentInParent<OrderTerminal>()){if(mouse.leftButton.wasPressedThisFrame)ui.OpenTerminal();return;}
  var slot=hit.collider.GetComponentInParent<KeySlot>();var tray=hit.collider.GetComponentInParent<PartsSupply>();
- if(mouse.leftButton.wasPressedThisFrame&&tray&&(state.stage==BuildStage.Switches||state.stage==BuildStage.Keycaps))PickUp();
+ if(mouse.leftButton.wasPressedThisFrame&&tray&&(state.stage==BuildStage.Switches||state.stage==BuildStage.Keycaps))PickUpAt(hit.point);
  else if(mouse.leftButton.wasPressedThisFrame&&slot&&state.stage==BuildStage.Test)TestKey(slot.index);
  else if(closeView&&mouse.rightButton.wasReleasedThisFrame&&rightTravel<5&&slot&&(state.stage==BuildStage.Test||state.stage==BuildStage.Keycaps||state.stage==BuildStage.Switches))QuickToolAction(slot.index);
  }
@@ -44,10 +44,31 @@ public partial class ShopGame : MonoBehaviour {
  }
  bool ValidSlot(int i)=>state.stage==BuildStage.Switches?state.switches[i]<0:state.stage==BuildStage.Keycaps&&state.switches[i]>=0&&state.caps[i]<0;
  void Highlight(int i){if(hover>=0)board.sockets[hover].sharedMaterial=Mat("8B9A83");hover=i;if(i>=0)board.sockets[i].sharedMaterial=Mat("E7C680");}
- void PickUp(){ReleaseTool();held=new GameObject("Part in your hand");held.transform.localScale=Vector3.one*PartScale;held.transform.position=new Vector3(state.stage==BuildStage.Keycaps?1.60f:-1.60f,4.4f,-.55f);previewSlot=-2;if(state.stage==BuildStage.Switches)KeyboardView.Switch(held.transform,catalog.switches[state.switchChoice].primary);else Box("Held cap",held.transform,Vector3.zero,new Vector3(.32f,.22f,.32f),ColorUtility.ToHtmlStringRGB(catalog.keycaps[state.capChoice].primary),.05f);sound.Click(state.switchChoice,.17f);hint="Yuvanın üzerine taşı, hizala ve bırak.";ui.Refresh();}
- IEnumerator Install(int i){busy=true;var item=held;held=null;Vector3 start=item.transform.position,end=board.SlotPosition(i);Vector3 aligned=end+Vector3.up*.12f;for(float t=0;t<1;t+=Time.deltaTime*6){item.transform.position=Vector3.Lerp(start,aligned,Mathf.SmoothStep(0,1,t));yield return null;}for(float t=0;t<1;t+=Time.deltaTime*9){item.transform.position=Vector3.Lerp(aligned,end,t*t*t);yield return null;}sound.Click(state.switchChoice,.5f);Destroy(item);if(state.stage==BuildStage.Switches){state.switches[i]=state.switchChoice;if(state.InstalledSwitches==61){state.stage=BuildStage.Keycaps;if(!state.capPackageOpened)closeView=false;hint="Switch'ler tamam. Şimdi renkleri yerleştirelim.";}}else{state.caps[i]=state.capChoice;if(state.InstalledCaps==61){state.stage=BuildStage.Test;state.fault=17;hint="Her tuşa dokun. Bir pin iyi oturmamış olabilir.";}}
- board.RenderSlot(i,state,catalog);if(board.pieces[i])yield return Settle(board.pieces[i].transform);busy=false;Changed();}
- IEnumerator Settle(Transform tr){Vector3 rest=tr.localPosition;for(float t=0;t<1;t+=Time.deltaTime*7){if(!tr)yield break;tr.localPosition=rest+Vector3.up*(Mathf.Sin(t*Mathf.PI*2)*.025f*(1-t));yield return null;}if(tr)tr.localPosition=rest;}
+ void PickUp(){PickUpAt(new Vector3(state.stage==BuildStage.Keycaps?1.60f:-1.60f,4.25f,-.55f));}
+ void PickUpAt(Vector3 source){ReleaseTool();held=new GameObject("Part in your hand");held.transform.localScale=Vector3.one*PartScale;held.transform.position=source+Vector3.up*.08f;previewSlot=-2;if(state.stage==BuildStage.Switches)KeyboardView.Switch(held.transform,catalog.switches[state.switchChoice].primary);else Box("Held cap",held.transform,Vector3.zero,new Vector3(.32f,.22f,.32f),ColorUtility.ToHtmlStringRGB(catalog.keycaps[state.capChoice].primary),.05f);sound.Click(state.switchChoice,.17f);hint="Yuvanın üzerine taşı, hizala ve bırak.";ui.Refresh();}
+ IEnumerator Install(int i){
+  busy=true;var item=held;held=null;if(!item){busy=false;yield break;}
+  Vector3 start=item.transform.position,end=board.SlotPosition(i),aligned=end+Vector3.up*.17f;
+  Quaternion initial=item.transform.rotation;
+  for(float elapsed=0;elapsed<.13f;elapsed+=Time.deltaTime){float t=Mathf.Clamp01(elapsed/.13f);item.transform.position=Vector3.Lerp(start,aligned,Mathf.SmoothStep(0,1,t));item.transform.rotation=Quaternion.Slerp(initial,Quaternion.identity,t);yield return null;}
+  item.transform.SetPositionAndRotation(aligned,Quaternion.identity);
+  for(float elapsed=0;elapsed<.11f;elapsed+=Time.deltaTime){float t=Mathf.Clamp01(elapsed/.11f);item.transform.position=Vector3.Lerp(aligned,end+Vector3.up*.035f,t*t);yield return null;}
+  item.transform.position=end+Vector3.up*.035f;yield return new WaitForSeconds(.045f);
+  for(float elapsed=0;elapsed<.055f;elapsed+=Time.deltaTime){float t=Mathf.Clamp01(elapsed/.055f);item.transform.position=Vector3.Lerp(end+Vector3.up*.035f,end,t);yield return null;}
+  item.transform.position=end;sound.Click(state.switchChoice,.5f);
+  if(state.stage==BuildStage.Switches){state.switches[i]=state.switchChoice;if(state.InstalledSwitches==61){state.stage=BuildStage.Keycaps;if(!state.capPackageOpened)closeView=false;hint="Switch'ler tamam. Şimdi renkleri yerleştirelim.";}}else{state.caps[i]=state.capChoice;if(state.InstalledCaps==61){state.stage=BuildStage.Test;state.fault=17;hint="Her tuşa dokun. Bir pin iyi oturmamış olabilir.";}}
+  item.SetActive(false);board.RenderSlot(i,state,catalog);Destroy(item);
+  if(board.pieces[i])yield return Settle(board.pieces[i].transform);
+  busy=false;Changed();
+ }
+ IEnumerator ReturnHeldPart(){
+  busy=true;var item=held;held=null;if(!item){busy=false;yield break;}
+  Vector3 start=item.transform.position,end=new Vector3(state.stage==BuildStage.Keycaps?1.60f:-1.60f,4.25f,-.55f);
+  Vector3 scale=item.transform.localScale;
+  for(float elapsed=0;elapsed<.22f;elapsed+=Time.deltaTime){float t=Mathf.Clamp01(elapsed/.22f);item.transform.position=Vector3.Lerp(start,end,Mathf.SmoothStep(0,1,t));item.transform.localScale=Vector3.Lerp(scale,scale*.65f,t);yield return null;}
+  Destroy(item);busy=false;hint="Parça kutuya döndü; boş bir yuvanın üzerine bırak.";ui.Refresh();
+ }
+ IEnumerator Settle(Transform tr){Vector3 rest=tr.localPosition;for(float elapsed=0;elapsed<.22f;elapsed+=Time.deltaTime){if(!tr)yield break;float t=elapsed/.22f;tr.localPosition=rest+Vector3.up*(.08f*Mathf.Exp(-3.2f*t)*Mathf.Sin(t*Mathf.PI*3f));yield return null;}if(tr)tr.localPosition=rest;}
  public void TestKey(int i){if(state.stage!=BuildStage.Test||busy)return;sound.Click(state.switchChoice,catalog.switches[state.switchChoice].volume);if(i==state.fault){hint=""+board.keys[i].label+" yanıt vermedi. Sağ tıkla: çıkar, pini düzelt ve yeniden oturt.";board.sockets[i].sharedMaterial=Mat("CA795B");}else{state.tested[i]=true;board.RenderSlot(i,state,catalog);if(board.pieces[i])StartCoroutine(Settle(board.pieces[i].transform));if(state.Tested==61){state.stage=BuildStage.Package;hint="61 / 61. Ellerine sağlık. Paketlemeye hazır.";}}Changed();}
  void Repair(int i){if(state.stage==BuildStage.Test){if(i!=state.fault){hint="Bu tuş sağlıklı; değiştirmeye gerek yok.";ui.Refresh();return;}state.fault=-1;state.tested[i]=false;hint="Pin düzeltildi. Bu tuşa yeniden basıp kontrol et.";sound.Click(1,.3f);if(board.pieces[i])StartCoroutine(Settle(board.pieces[i].transform));Changed();return;}
  if(state.caps[i]>=0){state.caps[i]=-1;state.tested[i]=false;}else if(state.switches[i]>=0){state.switches[i]=-1;state.stage=BuildStage.Switches;}board.RenderSlot(i,state,catalog);Changed();}
@@ -59,6 +80,7 @@ public partial class ShopGame : MonoBehaviour {
  Changed();}
  IEnumerator Pack(){if(busy)yield break;busy=true;closeView=true;inspection=false;state.packingStep++;RefreshParcel();if(parcel){var p=parcel.transform;Vector3 end=p.localScale;p.localScale=end*.75f;for(float t=0;t<1;t+=Time.deltaTime*2.5f){p.localScale=Vector3.Lerp(end*.75f,end,Mathf.SmoothStep(0,1,t));yield return null;}p.localScale=end;}sound.Click(0,.2f);if(state.packingStep>=3){state.stage=BuildStage.Ready;hint="Katlandı, bantlandı, etiketlendi. Güle güle kullanılsın.";}else hint=state.packingStep==1?"Kutu katlandı. Şimdi kâğıt bant.":"Bant tamam. Son dokunuş: müşteri etiketi.";busy=false;Changed();}
  public void ChooseSwitch(int i){if(state.stage!=BuildStage.Parts)return;state.switchChoice=i;sound.Click(i,catalog.switches[i].volume);Changed();}
+ public void SelectSwitchFromDrawer(int i){if(state.stage!=BuildStage.Parts&&state.stage!=BuildStage.Switches){hint="Switch çekmecesi açıldı. Parçalar sipariş aşamasında seçilebilir.";ui.Refresh();return;}state.switchChoice=Mathf.Clamp(i,0,catalog.switches.Length-1);hint=catalog.switches[state.switchChoice].displayName+" çekmecesi açıldı.";sound.Click(state.switchChoice,.16f);Changed();}
  public void ChooseCaps(int i){if(state.stage!=BuildStage.Parts)return;state.capChoice=i;Changed();}
  public void Upgrade(){if(state.Upgrade()){hint="Yeni raf, yeni bir bitki. Burası biraz daha senin oldu.";RefreshUpgrade();Changed();}else{hint=state.upgraded?"Yeni rafın yerinde.":"Raf için 90 jeton biriktir.";ui.Refresh();}}
  public void View(){if(busy)return;ReleaseTool();closeView=!closeView;inspection=false;ui.Refresh();}
@@ -67,7 +89,7 @@ public partial class ShopGame : MonoBehaviour {
  void RefreshSupply(){
   if(supply)Destroy(supply);supply=new GameObject("Component carton contents");
   for(int kind=0;kind<2;kind++){
-   bool caps=kind==1;if(caps?!state.capPackageOpened:!state.switchPackageOpened)continue;var group=new GameObject(caps?"Keycap carton pickup":"Switch carton pickup");group.transform.SetParent(supply.transform,false);group.transform.position=new Vector3(caps?-2.80f:-3.85f,4.09f,-1.55f);foreach(var package in FindObjectsByType<PartsPackage>(FindObjectsSortMode.None))if(package.keycaps==caps){var anchor=group.AddComponent<PartsSupplyAnchor>();anchor.target=package.transform;anchor.movable=package.GetComponent<MovableDeskProp>();group.transform.position=package.transform.position+Vector3.up*.055f;break;}
+   bool caps=kind==1;if(caps?!state.capPackageOpened:!state.switchPackageOpened)continue;var group=new GameObject(caps?"Keycap carton pickup":"Switch carton pickup");group.transform.SetParent(supply.transform,false);group.transform.position=new Vector3(caps?-2.80f:-3.85f,4.09f,-1.55f);foreach(var package in FindObjectsByType<PartsPackage>())if(package.keycaps==caps){var anchor=group.AddComponent<PartsSupplyAnchor>();anchor.target=package.transform;anchor.movable=package.GetComponent<MovableDeskProp>();group.transform.position=package.transform.position+Vector3.up*.055f;break;}
    bool active=caps?state.stage==BuildStage.Keycaps:state.stage==BuildStage.Switches;
    {var collider=group.AddComponent<BoxCollider>();collider.center=new Vector3(0,.05f,0);collider.size=new Vector3(.70f,.30f,.62f);if(active)group.AddComponent<PartsSupply>();}
    for(int i=0;i<12;i++){
@@ -85,8 +107,4 @@ public partial class ShopGame : MonoBehaviour {
  void OnApplicationQuit(){if(state!=null)ShopSave.Write(state);}
  }
 }
-
-
-
-
 

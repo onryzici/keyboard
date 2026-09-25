@@ -19,16 +19,20 @@ public partial class ShopGame {
  }
  int previewSlot=-1;
  public int FindAssemblySlot(Vector3 point) {
+  int nearest=-1;float score=float.PositiveInfinity;
   for(int i=0;i<board.keys.Length;i++) {
    var p=board.SlotPosition(i);var key=board.keys[i];
-   if(Mathf.Abs(point.x-p.x)<key.width*PartScale*.5f && Mathf.Abs(point.z-p.z)<.36f*PartScale*.5f)
-    return ValidSlot(i)?i:-1;
+   float x=Mathf.Abs(point.x-p.x)/(key.width*PartScale*.56f);
+   float z=Mathf.Abs(point.z-p.z)/(.36f*PartScale*.56f);
+   if(x>1||z>1)continue;
+   float candidate=x*x+z*z;
+   if(candidate<score){score=candidate;nearest=i;}
   }
-  return -1;
+  return nearest>=0&&ValidSlot(nearest)?nearest:-1;
  }
  void UpdateHeldPart(Ray ray,bool overUI,bool released) {
   var plane=new Plane(Vector3.up,new Vector3(0,4.224f,0));
-  if(!plane.Raycast(ray,out float distance))return;
+  if(!plane.Raycast(ray,out float distance)){if(released)StartCoroutine(ReturnHeldPart());return;}
   var point=ray.GetPoint(distance);int best=overUI?-1:FindAssemblySlot(point);
   Highlight(best);
   if(best!=previewSlot && state.stage==BuildStage.Keycaps) {
@@ -40,11 +44,11 @@ public partial class ShopGame {
   }
   previewSlot=best;
   var target=best>=0?board.SlotPosition(best)+Vector3.up*.19f:point+Vector3.up*.18f;
-  held.transform.position=Vector3.Lerp(held.transform.position,target,1-Mathf.Exp(-Time.deltaTime*28));
+  held.transform.position=Vector3.Lerp(held.transform.position,target,1-Mathf.Exp(-Time.deltaTime*22));
+  held.transform.rotation=Quaternion.Slerp(held.transform.rotation,best>=0?Quaternion.identity:Quaternion.Euler(0,0,-8),1-Mathf.Exp(-Time.deltaTime*16));
   if(!released)return;
   if(best>=0)StartCoroutine(Install(best));
-  else {Destroy(held);held=null;hint="Parça kutuya döndü; boş bir yuvanın üzerine bırak.";ui.Refresh();}
+  else StartCoroutine(ReturnHeldPart());
   previewSlot=-1;Highlight(-1);
  }
 }}
-

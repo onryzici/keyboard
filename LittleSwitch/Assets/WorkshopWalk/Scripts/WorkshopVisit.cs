@@ -28,6 +28,15 @@ namespace LittleSwitch.Environment
         {
             if(!ready||returning)return;
             if(terminalVisit&&!shop.touring&&!shop.ui.TerminalOpen&&shop.CanLeaveWorkbench){terminalVisit=false;LeaveWorkbench();return;}
+            if(shop.touring && Cursor.lockState==CursorLockMode.Locked && Mouse.current!=null && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                var ray=new Ray(walkingCamera.transform.position,walkingCamera.transform.forward);
+                if(Physics.Raycast(ray,out var hit,5f))
+                {
+                    var drawer=hit.collider.GetComponentInParent<WorkshopDrawer>();
+                    if(drawer)drawer.Toggle();
+                }
+            }
             if(Keyboard.current==null)return;
             if(shop.touring && Keyboard.current.eKey.wasPressedThisFrame && (NearTerminal()||NearBench()))EnterWorkbench(NearTerminal());
             else if(!shop.touring && Keyboard.current.escapeKey.wasPressedThisFrame && shop.CanLeaveWorkbench)LeaveWorkbench();
@@ -81,4 +90,3 @@ namespace LittleSwitch.Environment
         }
     }
 }
-

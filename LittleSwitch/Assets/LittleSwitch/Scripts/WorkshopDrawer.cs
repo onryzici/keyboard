@@ -1,16 +1,18 @@
 using System.Collections;
 using UnityEngine;
 namespace LittleSwitch {
-// Physical storage presentation. Inventory integration can use IsOpen later.
+// Physical switch storage: opening a row also selects its switch family.
 public class WorkshopDrawer : MonoBehaviour {
  public float travel=.85f;
  public Vector3 slideDirection=Vector3.back;
+ public int switchFamily=-1;
  public bool IsOpen { get; private set; }
  Vector3 closedPosition;
  Coroutine motion;
  void Awake(){closedPosition=transform.localPosition;}
  public void Toggle(){
   IsOpen=!IsOpen;
+  if(IsOpen&&switchFamily>=0){var shop=FindAnyObjectByType<ShopGame>();if(shop)shop.SelectSwitchFromDrawer(switchFamily);}
   if(motion!=null)StopCoroutine(motion);
   motion=StartCoroutine(Slide());
  }
