@@ -86,7 +86,12 @@ public partial class ShopGame : MonoBehaviour {
  public void View(){if(busy)return;ReleaseTool();closeView=!closeView;inspection=false;ui.Refresh();}
  public void Inspect(){if(busy)return;ReleaseTool();inspection=!inspection;closeView=true;ui.Refresh();}
  void Changed(){ShopSave.Write(state);RefreshSupply();RefreshParcel();ui.Refresh();}
+ (BuildStage stage,int switches,int caps,bool switchesOpen,bool capsOpen) supplyAppearance;
+ bool supplyAppearanceValid;
  void RefreshSupply(){
+  var appearance=(state.stage,state.switchChoice,state.capChoice,state.switchPackageOpened,state.capPackageOpened);
+  if(supply&&supplyAppearanceValid&&supplyAppearance.Equals(appearance))return;
+  supplyAppearance=appearance;supplyAppearanceValid=true;
   if(supply)Destroy(supply);supply=new GameObject("Component carton contents");
   for(int kind=0;kind<2;kind++){
    bool caps=kind==1;if(caps?!state.capPackageOpened:!state.switchPackageOpened)continue;var group=new GameObject(caps?"Keycap carton pickup":"Switch carton pickup");group.transform.SetParent(supply.transform,false);group.transform.position=new Vector3(caps?-2.80f:-3.85f,4.09f,-1.55f);foreach(var package in FindObjectsByType<PartsPackage>())if(package.keycaps==caps){var anchor=group.AddComponent<PartsSupplyAnchor>();anchor.target=package.transform;anchor.movable=package.GetComponent<MovableDeskProp>();group.transform.position=package.transform.position+Vector3.up*.055f;break;}
@@ -107,4 +112,3 @@ public partial class ShopGame : MonoBehaviour {
  void OnApplicationQuit(){if(state!=null)ShopSave.Write(state);}
  }
 }
-

@@ -1,0 +1,1 @@
+PASS: cap extraction from test stage, switch extraction, physical reinstallation, pliers repair; centered board + both supplies in frame; exact matched FOV and rotation at return.

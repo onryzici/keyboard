@@ -1,0 +1,1 @@
+samples=1579 resolution=1654x1138 median_ms=16.59787 p95_ms=35.514 draws=1658 shadows=1088 triangles=2071661 main_ms=16.59825 render_ms=0 gc_bytes=9527 GPU=Apple M2 Pro

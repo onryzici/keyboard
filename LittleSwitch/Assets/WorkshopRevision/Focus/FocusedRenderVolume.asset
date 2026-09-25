@@ -143,10 +143,10 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 2.4
+    m_Value: 2.2
   intensity:
     m_OverrideState: 1
-    m_Value: 0.035
+    m_Value: 0.085
   scatter:
     m_OverrideState: 1
     m_Value: 0.6
@@ -187,16 +187,16 @@ MonoBehaviour:
   interCascadeBorders: 1
   maxShadowDistance:
     m_OverrideState: 1
-    m_Value: 55
+    m_Value: 45
   directionalTransmissionMultiplier:
     m_OverrideState: 1
     m_Value: 1
   cascadeShadowSplitCount:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 2
   cascadeShadowSplit0:
     m_OverrideState: 1
-    m_Value: 0.05
+    m_Value: 0.35
   cascadeShadowSplit1:
     m_OverrideState: 1
     m_Value: 0.15
@@ -513,7 +513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42ef2681fa3dc8c4fa031f044e68c63f, type: 3}
   m_Name: GlobalIllumination
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.GlobalIllumination
-  active: 1
+  active: 0
   quality:
     m_OverrideState: 1
     m_Value: 2
@@ -533,13 +533,13 @@ MonoBehaviour:
       m_Bits: 1
   depthBufferThickness:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.08
   fullResolutionSS:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   m_MaxRaySteps:
     m_OverrideState: 1
-    m_Value: 48
+    m_Value: 32
   m_DenoiseSS:
     m_OverrideState: 1
     m_Value: 1
@@ -580,7 +580,7 @@ MonoBehaviour:
     m_Value: 0
   sampleCount:
     m_OverrideState: 1
-    m_Value: 2
+    m_Value: 4
   bounceCount:
     m_OverrideState: 1
     m_Value: 1
@@ -849,7 +849,7 @@ MonoBehaviour:
   active: 1
   temperature:
     m_OverrideState: 1
-    m_Value: 4
+    m_Value: 0
   tint:
     m_OverrideState: 1
     m_Value: 0

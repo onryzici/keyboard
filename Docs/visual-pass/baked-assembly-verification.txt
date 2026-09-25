@@ -1,0 +1,1 @@
+PASS: mouse pickup + drag + release for all 61 switches and all 61 sculpted keycaps; occupied-slot rejection; test/repair; package/delivery. Editor-only isolated save.
